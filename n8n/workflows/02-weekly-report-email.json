@@ -1,0 +1,55 @@
+{
+  "name": "GovSense AI - 02 Weekly Report Email",
+  "active": false,
+  "nodes": [
+    {
+      "id": "cron-weekly",
+      "name": "Every Sunday 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "cronExpression", "expression": "0 8 * * 0" }]
+        }
+      }
+    },
+    {
+      "id": "fetch-weekly-pdf",
+      "name": "GET Weekly PDF Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 300],
+      "parameters": {
+        "url": "={{$env.BACKEND_URL}}/api/report/pdf",
+        "method": "GET",
+        "qs": { "parameters": [{ "name": "range", "value": "weekly" }] },
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "x-api-key", "value": "={{$env.N8N_API_KEY}}" }] },
+        "options": { "response": { "response": { "responseFormat": "file" } } }
+      },
+      "notes": "Reuses reportController.downloadPdfReport - authenticated via allowServiceOrRole with the shared N8N_API_KEY header."
+    },
+    {
+      "id": "email-weekly-report",
+      "name": "Email Officers",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [760, 300],
+      "parameters": {
+        "fromEmail": "={{$env.EMAIL_FROM}}",
+        "toEmail": "={{$env.OFFICER_DIGEST_LIST}}",
+        "subject": "GovSense AI - Weekly Sentiment Report",
+        "emailFormat": "html",
+        "html": "<p>Attached is this week's citizen feedback sentiment report.</p>",
+        "options": { "attachmentsUi": { "attachmentsBinary": [{ "property": "data" }] } }
+      },
+      "credentials": { "smtp": { "id": "govsense-smtp", "name": "GovSense SMTP" } }
+    }
+  ],
+  "connections": {
+    "Every Sunday 08:00": { "main": [[{ "node": "GET Weekly PDF Report", "type": "main", "index": 0 }]] },
+    "GET Weekly PDF Report": { "main": [[{ "node": "Email Officers", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

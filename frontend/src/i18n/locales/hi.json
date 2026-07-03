@@ -1,0 +1,67 @@
+{
+  "nav": {
+    "home": "होम",
+    "about": "हमारे बारे में",
+    "policies": "नीतियाँ",
+    "submitFeedback": "प्रतिक्रिया दें",
+    "myFeedback": "मेरी प्रतिक्रिया",
+    "profile": "प्रोफ़ाइल",
+    "login": "लॉगिन",
+    "register": "पंजीकरण करें",
+    "logout": "लॉगआउट",
+    "dashboard": "डैशबोर्ड"
+  },
+  "common": {
+    "submit": "सबमिट करें",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "search": "खोजें",
+    "loading": "लोड हो रहा है...",
+    "close": "बंद करें",
+    "confirm": "पुष्टि करें",
+    "back": "वापस",
+    "next": "अगला",
+    "viewAll": "सभी देखें",
+    "export": "निर्यात करें",
+    "approve": "स्वीकृत करें",
+    "reject": "अस्वीकार करें",
+    "status": "स्थिति",
+    "actions": "कार्रवाई"
+  },
+  "feedback": {
+    "policyName": "नीति का नाम",
+    "department": "विभाग",
+    "category": "श्रेणी",
+    "title": "प्रतिक्रिया शीर्षक",
+    "description": "प्रतिक्रिया विवरण",
+    "rating": "रेटिंग",
+    "location": "स्थान",
+    "attachment": "अनुलग्नक (वैकल्पिक)",
+    "voiceInput": "आवाज़ इनपुट",
+    "submitButton": "प्रतिक्रिया सबमिट करें",
+    "sentiment": "भावना",
+    "positive": "सकारात्मक",
+    "negative": "नकारात्मक",
+    "neutral": "तटस्थ"
+  },
+  "auth": {
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "confirmPassword": "पासवर्ड की पुष्टि करें",
+    "name": "पूरा नाम",
+    "phone": "फ़ोन नंबर",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "resetPassword": "पासवर्ड रीसेट करें",
+    "dontHaveAccount": "खाता नहीं है?",
+    "alreadyHaveAccount": "पहले से ही खाता है?",
+    "loginAs": "इस रूप में लॉगिन करें"
+  },
+  "home": {
+    "heroTitle": "आपकी आवाज़ बेहतर नीति बनाती है",
+    "heroSubtitle": "सरकारी नीतियों पर प्रतिक्रिया दें और इसे वास्तविक समय में AI द्वारा विश्लेषित होते देखें।",
+    "ctaSubmit": "प्रतिक्रिया दें",
+    "ctaExplore": "नीतियाँ देखें"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "policies": "Policies",
+    "submitFeedback": "Submit Feedback",
+    "myFeedback": "My Feedback",
+    "profile": "Profile",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "dashboard": "Dashboard"
+  },
+  "common": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "loading": "Loading...",
+    "close": "Close",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "viewAll": "View All",
+    "export": "Export",
+    "approve": "Approve",
+    "reject": "Reject",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "feedback": {
+    "policyName": "Policy Name",
+    "department": "Department",
+    "category": "Category",
+    "title": "Feedback Title",
+    "description": "Feedback Description",
+    "rating": "Rating",
+    "location": "Location",
+    "attachment": "Attachment (optional)",
+    "voiceInput": "Voice Input",
+    "submitButton": "Submit Feedback",
+    "sentiment": "Sentiment",
+    "positive": "Positive",
+    "negative": "Negative",
+    "neutral": "Neutral"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginAs": "Login as"
+  },
+  "home": {
+    "heroTitle": "Your Voice Shapes Better Policy",
+    "heroSubtitle": "Submit feedback on government policies and see it analyzed by AI in real time.",
+    "ctaSubmit": "Submit Feedback",
+    "ctaExplore": "Explore Policies"
+  }
+}

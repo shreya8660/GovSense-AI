@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply antialiased text-slate-800 dark:text-slate-100 transition-colors duration-300;
+}
+
+/* Reusable glassmorphism card utility, used across dashboards */
+.glass-card {
+  @apply bg-white/60 dark:bg-slate-800/60 backdrop-blur-glass shadow-glass border border-white/40 dark:border-slate-700/40 rounded-2xl;
+}

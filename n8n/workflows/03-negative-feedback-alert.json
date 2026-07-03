@@ -1,0 +1,89 @@
+{
+  "name": "GovSense AI - 03 Negative Feedback Threshold Alert",
+  "active": false,
+  "nodes": [
+    {
+      "id": "cron-every-6h",
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300],
+      "parameters": {
+        "rule": { "interval": [{ "field": "hours", "hoursInterval": 6 }] }
+      }
+    },
+    {
+      "id": "fetch-stats",
+      "name": "GET Dashboard Stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 300],
+      "parameters": {
+        "url": "={{$env.BACKEND_URL}}/api/dashboard/stats",
+        "method": "GET",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "x-api-key", "value": "={{$env.N8N_API_KEY}}" }] }
+      },
+      "notes": "Response shape: { success, data: { stats: { total, positive, negative, neutral, negativePercentage, ... } } }"
+    },
+    {
+      "id": "if-threshold-exceeded",
+      "name": "IF Negative % > Threshold",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [760, 300],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "leftValue": "={{$json.data.stats.negativePercentage}}",
+              "rightValue": "={{$env.NEGATIVE_ALERT_THRESHOLD || 40}}",
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "urgent-email",
+      "name": "Send Urgent Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [1020, 200],
+      "parameters": {
+        "fromEmail": "={{$env.EMAIL_FROM}}",
+        "toEmail": "={{$env.OFFICER_DIGEST_LIST}}",
+        "subject": "🚨 URGENT: Negative feedback threshold exceeded",
+        "emailFormat": "html",
+        "html": "<p><strong>{{$json.data.stats.negativePercentage}}%</strong> of feedback is currently negative, above the configured threshold.</p><p>Total feedback: {{$json.data.stats.total}} | Negative: {{$json.data.stats.negative}}</p>"
+      },
+      "credentials": { "smtp": { "id": "govsense-smtp", "name": "GovSense SMTP" } }
+    },
+    {
+      "id": "urgent-slack",
+      "name": "Slack Urgent Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1020, 400],
+      "parameters": {
+        "select": "channel",
+        "channelId": "#govsense-alerts",
+        "text": "🚨 Negative feedback at {{$json.data.stats.negativePercentage}}% - above threshold. Total: {{$json.data.stats.total}}, Negative: {{$json.data.stats.negative}}"
+      },
+      "credentials": { "slackApi": { "id": "govsense-slack", "name": "GovSense Slack" } }
+    }
+  ],
+  "connections": {
+    "Every 6 Hours": { "main": [[{ "node": "GET Dashboard Stats", "type": "main", "index": 0 }]] },
+    "GET Dashboard Stats": { "main": [[{ "node": "IF Negative % > Threshold", "type": "main", "index": 0 }]] },
+    "IF Negative % > Threshold": {
+      "main": [
+        [{ "node": "Send Urgent Email", "type": "main", "index": 0 }, { "node": "Slack Urgent Alert", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" }
+}

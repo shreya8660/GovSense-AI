@@ -1,0 +1,95 @@
+{
+  "name": "GovSense AI - 01 Feedback Submission Notification",
+  "active": false,
+  "nodes": [
+    {
+      "id": "webhook-trigger",
+      "name": "Feedback Submitted (Webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "govsense-feedback-submitted",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "notes": "Backend POSTs here from feedbackController.createFeedback right after AI analysis + save. Payload: { event, feedbackId, title, department, sentiment, confidenceScore }"
+    },
+    {
+      "id": "send-confirmation-email",
+      "name": "Send Citizen Confirmation",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [500, 180],
+      "parameters": {
+        "fromEmail": "={{$env.EMAIL_FROM}}",
+        "toEmail": "={{$json.citizenEmail}}",
+        "subject": "GovSense AI - We received your feedback",
+        "emailFormat": "html",
+        "html": "<p>Hi {{$json.citizenName}},</p><p>Your feedback \"{{$json.title}}\" was received. Detected sentiment: <strong>{{$json.sentiment}}</strong>.</p>"
+      },
+      "credentials": { "smtp": { "id": "govsense-smtp", "name": "GovSense SMTP" } }
+    },
+    {
+      "id": "if-negative",
+      "name": "IF Negative Sentiment",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [500, 420],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "leftValue": "={{$json.sentiment}}",
+              "rightValue": "negative",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "notify-officer-email",
+      "name": "Notify Department Officers",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [780, 340],
+      "parameters": {
+        "fromEmail": "={{$env.EMAIL_FROM}}",
+        "toEmail": "={{$json.departmentContactEmail}}",
+        "subject": "⚠️ New negative feedback: {{$json.title}}",
+        "emailFormat": "html",
+        "html": "<p>A new negative-sentiment feedback was just submitted for <strong>{{$json.department}}</strong>.</p><p>Confidence: {{$json.confidenceScore}}</p><p>Open the officer dashboard to review.</p>"
+      },
+      "credentials": { "smtp": { "id": "govsense-smtp", "name": "GovSense SMTP" } }
+    },
+    {
+      "id": "slack-alert",
+      "name": "Slack Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [780, 500],
+      "parameters": {
+        "select": "channel",
+        "channelId": "#govsense-alerts",
+        "text": "⚠️ Negative feedback submitted: *{{$json.title}}* ({{$json.department}}) - confidence {{$json.confidenceScore}}"
+      },
+      "credentials": { "slackApi": { "id": "govsense-slack", "name": "GovSense Slack" } }
+    }
+  ],
+  "connections": {
+    "Feedback Submitted (Webhook)": {
+      "main": [[{ "node": "Send Citizen Confirmation", "type": "main", "index": 0 }, { "node": "IF Negative Sentiment", "type": "main", "index": 0 }]]
+    },
+    "IF Negative Sentiment": {
+      "main": [
+        [{ "node": "Notify Department Officers", "type": "main", "index": 0 }, { "node": "Slack Alert", "type": "main", "index": 0 }],
+        []
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" }
+}
