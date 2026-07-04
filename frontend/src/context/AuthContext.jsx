@@ -51,16 +51,21 @@ export function AuthProvider({ children }) {
     setUser(sessionUser);
   };
 
-  const login = async (email, password, selectedRole) => {
-    const res = await authService.login({ email, password, role: selectedRole });
-    persistSession(res.data.token, res.data.role, res.data.user);
-    return res.data;
-  };
+ const login = async (email, password, selectedRole) => {
+  const res = await authService.login({
+    email,
+    password,
+    role: selectedRole,
+  });
 
+  persistSession(res.token, res.role, res.user);
+
+  return res;
+};
   const register = async (data) => {
     const res = await authService.register(data);
-    persistSession(res.data.token, res.data.role, res.data.user);
-    return res.data;
+    persistSession(res.token, res.role, res.user);
+    return res;
   };
 
   const updateUser = (updatedUser) => {
